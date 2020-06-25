@@ -133,7 +133,7 @@ public class RegexParserTest {
 
     public void testHelper(String config, String message) throws IOException, SAXException {
         Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-config-" + config + ".xml"));
-        String expected = StreamUtils.readStreamAsString(getClass().getResourceAsStream("/expected-" + config + ".xml"));
+        String expected = StreamUtils.readStreamAsString(getClass().getResourceAsStream("/expected-" + config + ".xml"), "UTF-8");
 
         StringResult result = new StringResult();
         smooks.filterSource(new StringSource(message), result);
