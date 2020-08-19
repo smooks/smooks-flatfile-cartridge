@@ -42,37 +42,34 @@
  */
 package org.smooks.cartridges.flatfile.variablefield;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.smooks.SmooksException;
+import org.smooks.cartridges.flatfile.BindingType;
+import org.smooks.cartridges.flatfile.FieldMetaData;
 import org.smooks.cartridges.flatfile.RecordMetaData;
 import org.smooks.cartridges.flatfile.RecordParserFactory;
+import org.smooks.cartridges.javabean.Bean;
 import org.smooks.cdr.SmooksConfigurationException;
 import org.smooks.cdr.SmooksResourceConfiguration;
-import org.smooks.cdr.annotation.AnnotationConstants;
-import org.smooks.cdr.annotation.ConfigParam;
 import org.smooks.container.ExecutionContext;
 import org.smooks.delivery.VisitorAppender;
 import org.smooks.delivery.VisitorConfigMap;
-import org.smooks.delivery.annotation.Initialize;
 import org.smooks.delivery.dom.DOMVisitAfter;
 import org.smooks.delivery.ordering.Consumer;
 import org.smooks.delivery.sax.SAXElement;
 import org.smooks.delivery.sax.SAXVisitAfter;
 import org.smooks.expression.MVELExpressionEvaluator;
-import org.smooks.cartridges.flatfile.BindingType;
-import org.smooks.cartridges.flatfile.FieldMetaData;
-import org.smooks.cartridges.javabean.Bean;
 import org.smooks.javabean.context.BeanContext;
 import org.smooks.xml.XmlUtil;
 import org.w3c.dom.Element;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Abstract VariableFieldRecordParserFactory.
@@ -81,44 +78,47 @@ import org.w3c.dom.Element;
  */
 public abstract class VariableFieldRecordParserFactory implements RecordParserFactory, VisitorAppender {
 
-    @ConfigParam(defaultVal = AnnotationConstants.NULL_STRING)
-    private String fields;
+    private static final String RECORD_BEAN = "recordBean";
+
+    @Inject
+    private Optional<String> fields;
 
     private VariableFieldRecordMetaData vfRecordMetaData;
 
-    @ConfigParam(use = ConfigParam.Use.OPTIONAL)
-    private String recordDelimiter;
+    @Inject
+    private Optional<String> recordDelimiter;
     private Pattern recordDelimiterPattern;
 
-    @ConfigParam(defaultVal = "false")
-    private boolean keepDelimiter;
+    @Inject
+    private Boolean keepDelimiter = false;
 
-    @ConfigParam(defaultVal = "record")
-    private String recordElementName;
+    @Inject
+    private String recordElementName = "record";
 
-    @ConfigParam(use = ConfigParam.Use.OPTIONAL)
-    private String bindBeanId;
+    @Inject
+    private Optional<String> bindBeanId;
 
-    @ConfigParam(use = ConfigParam.Use.OPTIONAL)
-    private Class<?> bindBeanClass;
+    @Inject
+    private Optional<Class<?>> bindBeanClass;
 
-    @ConfigParam(use = ConfigParam.Use.OPTIONAL)
-    private BindingType bindingType;
-    @ConfigParam(use = ConfigParam.Use.OPTIONAL)
-    private String bindMapKeyField;
-    private static final String RECORD_BEAN = "recordBean";
+    @Inject
+    private Optional<BindingType> bindingType;
+    @Inject
+    private Optional<String> bindMapKeyField;
 
-    @ConfigParam(name = "skip-line-count", defaultVal = "0")
-    private int skipLines;
+    @Inject
+    @Named("skip-line-count")
+    private Integer skipLines = 0;
 
-    @ConfigParam(name = "fields-in-message", defaultVal = "0")
-    private boolean fieldsInMessage;
+    @Inject
+    @Named("fields-in-message")
+    private Boolean fieldsInMessage = false;
 
-    @ConfigParam(defaultVal = "false")
-    private boolean validateHeader;
+    @Inject
+    private Boolean validateHeader = false;
 
-    @ConfigParam(defaultVal = "false")
-    private boolean strict;
+    @Inject
+    private Boolean strict = false;
 
     private String overFlowFromLastRecord = "";
 
@@ -178,7 +178,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
     }
 
     public void addVisitors(VisitorConfigMap visitorMap) {
-        if (bindBeanId != null && bindBeanClass != null) {
+        if (bindBeanId.isPresent() && bindBeanClass.isPresent()) {
             Bean bean;
 
             if (fieldsInMessage) {
@@ -191,27 +191,27 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
                                 + "Only supported for single record type record sets.  Use <jb:bean> configs for multi binding record type record sets.");
             }
 
-            if (bindingType == BindingType.LIST) {
-                Bean listBean = new Bean(ArrayList.class, bindBeanId,
+            if (BindingType.LIST.equals(bindingType.orElse(null))) {
+                Bean listBean = new Bean(ArrayList.class, bindBeanId.get(),
                         SmooksResourceConfiguration.DOCUMENT_FRAGMENT_SELECTOR);
 
-                bean = listBean.newBean(bindBeanClass, recordElementName);
+                bean = listBean.newBean(bindBeanClass.get(), recordElementName);
                 listBean.bindTo(bean);
                 addFieldBindings(bean);
 
                 listBean.addVisitors(visitorMap);
-            } else if (bindingType == BindingType.MAP) {
-                if (bindMapKeyField == null) {
+            } else if (BindingType.MAP.equals(bindingType.orElse(null))) {
+                if (!bindMapKeyField.isPresent()) {
                     throw new SmooksConfigurationException(
                             "'MAP' Binding must specify a 'keyField' property on the binding configuration.");
                 }
 
-                vfRecordMetaData.getRecordMetaData().assertValidFieldName(bindMapKeyField);
+                vfRecordMetaData.getRecordMetaData().assertValidFieldName(bindMapKeyField.get());
 
-                Bean mapBean = new Bean(LinkedHashMap.class, bindBeanId,
+                Bean mapBean = new Bean(LinkedHashMap.class, bindBeanId.get(),
                         SmooksResourceConfiguration.DOCUMENT_FRAGMENT_SELECTOR);
-                Bean recordBean = new Bean(bindBeanClass, RECORD_BEAN, recordElementName);
-                MapBindingWiringVisitor wiringVisitor = new MapBindingWiringVisitor(bindMapKeyField, bindBeanId);
+                Bean recordBean = new Bean(bindBeanClass.get(), RECORD_BEAN, recordElementName);
+                MapBindingWiringVisitor wiringVisitor = new MapBindingWiringVisitor(bindMapKeyField.get(), bindBeanId.get());
 
                 addFieldBindings(recordBean);
 
@@ -219,7 +219,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
                 recordBean.addVisitors(visitorMap);
                 visitorMap.addVisitor(wiringVisitor, recordElementName, null, false);
             } else {
-                bean = new Bean(bindBeanClass, bindBeanId, recordElementName);
+                bean = new Bean(bindBeanClass.get(), bindBeanId.get(), recordElementName);
                 addFieldBindings(bean);
 
                 bean.addVisitors(visitorMap);
@@ -227,27 +227,27 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
         }
     }
 
-    @Initialize
+    @PostConstruct
     public final void fixupRecordDelimiter() {
-        if (recordDelimiter == null) {
+        if (!recordDelimiter.isPresent()) {
             return;
         }
 
         // Fixup the record delimiter...
-        if (recordDelimiter.startsWith("regex:")) {
-            recordDelimiterPattern = Pattern.compile(recordDelimiter.substring("regex:".length()),
+        if (recordDelimiter.get().startsWith("regex:")) {
+            recordDelimiterPattern = Pattern.compile(recordDelimiter.get().substring("regex:".length()),
                     (Pattern.MULTILINE | Pattern.DOTALL));
         } else {
-            recordDelimiter = removeSpecialCharEncodeString(recordDelimiter, "\\n", '\n');
-            recordDelimiter = removeSpecialCharEncodeString(recordDelimiter, "\\r", '\r');
-            recordDelimiter = removeSpecialCharEncodeString(recordDelimiter, "\\t", '\t');
-            recordDelimiter = XmlUtil.removeEntities(recordDelimiter);
+            recordDelimiter = Optional.of(removeSpecialCharEncodeString(recordDelimiter.get(), "\\n", '\n'));
+            recordDelimiter = Optional.of(removeSpecialCharEncodeString(recordDelimiter.get(), "\\r", '\r'));
+            recordDelimiter = Optional.of(removeSpecialCharEncodeString(recordDelimiter.get(), "\\t", '\t'));
+            recordDelimiter = Optional.ofNullable(XmlUtil.removeEntities(recordDelimiter.get()));
         }
     }
 
-    @Initialize
+    @PostConstruct
     public final void buildRecordMetaData() {
-        vfRecordMetaData = new VariableFieldRecordMetaData(recordElementName, fields);
+        vfRecordMetaData = new VariableFieldRecordMetaData(recordElementName, fields.orElse(null));
     }
 
     /**
@@ -331,7 +331,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
         }
 
         public boolean consumes(Object object) {
-            if (keyExtractor.getExpression().indexOf(object.toString()) != -1) {
+            if (keyExtractor.getExpression().contains(object.toString())) {
                 return true;
             }
 
@@ -350,8 +350,8 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
             int builderLen = recordBuffer.length();
             char lastChar = recordBuffer.charAt(builderLen - 1);
 
-            if (recordDelimiter != null) {
-                int stringLen = recordDelimiter.length();
+            if (recordDelimiter.isPresent()) {
+                int stringLen = recordDelimiter.get().length();
 
                 if (builderLen < stringLen) {
                     return false;
@@ -359,7 +359,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
 
                 int stringIndx = 0;
                 for (int i = (builderLen - stringLen); i < builderLen; i++) {
-                    if (recordBuffer.charAt(i) != recordDelimiter.charAt(stringIndx)) {
+                    if (recordBuffer.charAt(i) != recordDelimiter.get().charAt(stringIndx)) {
                         return false;
                     }
                     stringIndx++;
