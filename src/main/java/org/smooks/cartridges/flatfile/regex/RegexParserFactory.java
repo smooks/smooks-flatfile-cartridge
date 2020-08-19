@@ -42,12 +42,12 @@
  */
 package org.smooks.cartridges.flatfile.regex;
 
-import org.smooks.cdr.annotation.ConfigParam;
 import org.smooks.cartridges.flatfile.RecordParser;
 import org.smooks.cartridges.flatfile.variablefield.VariableFieldRecordParserFactory;
-import org.smooks.javabean.DataDecodeException;
-import org.smooks.javabean.DataDecoder;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.regex.Pattern;
 
 /**
@@ -57,9 +57,18 @@ import java.util.regex.Pattern;
  */
 public class RegexParserFactory extends VariableFieldRecordParserFactory {
 
-    @ConfigParam(decoder = RegexPatternDecoder.class)
-    private Pattern regexPattern;
+    @Inject
+    @Named("regexPattern")
+    private String patternAsString;
+    
+    private Pattern pattern;
 
+    @PostConstruct
+    public void postConstruct() {
+        pattern = Pattern.compile(patternAsString, (Pattern.MULTILINE | Pattern.DOTALL));
+
+    }
+    
     public RecordParser newRecordParser() {
         return new RegexParser();
     }
@@ -69,12 +78,6 @@ public class RegexParserFactory extends VariableFieldRecordParserFactory {
      * @return The Regex Pattern instance to be used for parsing.
      */
     public Pattern getRegexPattern() {
-        return regexPattern;
-    }
-
-    public static class RegexPatternDecoder implements DataDecoder {
-        public Object decode(String data) throws DataDecodeException {
-            return Pattern.compile(data, (Pattern.MULTILINE | Pattern.DOTALL));
-        }
+        return pattern;
     }
 }

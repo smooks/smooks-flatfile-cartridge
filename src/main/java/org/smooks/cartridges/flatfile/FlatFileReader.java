@@ -44,19 +44,20 @@ package org.smooks.cartridges.flatfile;
 
 import org.apache.commons.lang.StringUtils;
 import org.smooks.cdr.SmooksResourceConfiguration;
-import org.smooks.cdr.annotation.AppContext;
-import org.smooks.cdr.annotation.Config;
-import org.smooks.cdr.annotation.ConfigParam;
-import org.smooks.cdr.annotation.Configurator;
+import org.smooks.cdr.injector.Scope;
+import org.smooks.cdr.lifecycle.phase.PostConstructLifecyclePhase;
+import org.smooks.cdr.registry.lookup.LifecycleManagerLookup;
 import org.smooks.container.ApplicationContext;
 import org.smooks.container.ExecutionContext;
 import org.smooks.delivery.VisitorAppender;
 import org.smooks.delivery.VisitorConfigMap;
-import org.smooks.delivery.annotation.Initialize;
 import org.smooks.xml.SmooksXMLReader;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.XMLConstants;
 import java.io.IOException;
 import java.util.List;
@@ -78,26 +79,27 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
     private ContentHandler contentHandler;
 	private ExecutionContext execContext;
 
-    @Config
+    @Inject
     private SmooksResourceConfiguration config;
 
-    @AppContext
+    @Inject
     private ApplicationContext appContext;
 
-    @ConfigParam(name = "parserFactory")
+    @Inject
+    @Named("parserFactory")
     private Class<? extends RecordParserFactory> parserFactoryClass;
     private RecordParserFactory parserFactory;
 
-    @ConfigParam(defaultVal="records")
-    private String rootElementName;
+    @Inject
+    private String rootElementName = "records";
 
-    @ConfigParam(defaultVal="false")
-    private boolean indent;
+    @Inject
+    private Boolean indent = false;
 
-	@Initialize
+	@PostConstruct
 	public void initialize() throws IllegalAccessException, InstantiationException {
         parserFactory = parserFactoryClass.newInstance();
-        Configurator.configure(parserFactory, config, appContext);
+        appContext.getRegistry().lookup(new LifecycleManagerLookup()).applyPhase(parserFactory, new PostConstructLifecyclePhase(new Scope(appContext.getRegistry(), config, parserFactory)));
 	}
 
     public void addVisitors(VisitorConfigMap visitorMap) {
