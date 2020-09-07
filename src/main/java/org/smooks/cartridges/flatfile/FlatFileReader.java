@@ -49,8 +49,9 @@ import org.smooks.cdr.lifecycle.phase.PostConstructLifecyclePhase;
 import org.smooks.cdr.registry.lookup.LifecycleManagerLookup;
 import org.smooks.container.ApplicationContext;
 import org.smooks.container.ExecutionContext;
+import org.smooks.delivery.ContentHandlerBinding;
+import org.smooks.delivery.Visitor;
 import org.smooks.delivery.VisitorAppender;
-import org.smooks.delivery.VisitorConfigMap;
 import org.smooks.xml.SmooksXMLReader;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
@@ -60,6 +61,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.XMLConstants;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -102,9 +104,12 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
         appContext.getRegistry().lookup(new LifecycleManagerLookup()).applyPhase(parserFactory, new PostConstructLifecyclePhase(new Scope(appContext.getRegistry(), config, parserFactory)));
 	}
 
-    public void addVisitors(VisitorConfigMap visitorMap) {
+	@Override
+    public List<ContentHandlerBinding<Visitor>> addVisitors() {
         if(parserFactory instanceof VisitorAppender) {
-            ((VisitorAppender) parserFactory).addVisitors(visitorMap);
+            return ((VisitorAppender) parserFactory).addVisitors();
+        } else {
+            return Collections.emptyList();
         }
     }
 
