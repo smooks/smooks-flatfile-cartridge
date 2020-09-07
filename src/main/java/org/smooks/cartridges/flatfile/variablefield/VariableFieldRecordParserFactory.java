@@ -50,9 +50,11 @@ import org.smooks.cartridges.flatfile.RecordParserFactory;
 import org.smooks.cartridges.javabean.Bean;
 import org.smooks.cdr.SmooksConfigurationException;
 import org.smooks.cdr.SmooksResourceConfiguration;
+import org.smooks.cdr.registry.Registry;
 import org.smooks.container.ExecutionContext;
+import org.smooks.delivery.ContentHandlerBinding;
+import org.smooks.delivery.Visitor;
 import org.smooks.delivery.VisitorAppender;
-import org.smooks.delivery.VisitorConfigMap;
 import org.smooks.delivery.dom.DOMVisitAfter;
 import org.smooks.delivery.ordering.Consumer;
 import org.smooks.delivery.sax.SAXElement;
@@ -120,6 +122,9 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
     @Inject
     private Boolean strict = false;
 
+    @Inject
+    private Registry registry;
+    
     private String overFlowFromLastRecord = "";
 
     public int getSkipLines() {
@@ -177,9 +182,11 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
         return strict;
     }
 
-    public void addVisitors(VisitorConfigMap visitorMap) {
+    @Override
+    public List<ContentHandlerBinding<Visitor>> addVisitors() {
+        List<ContentHandlerBinding<Visitor>> visitorBindings = new ArrayList<>(); 
         if (bindBeanId.isPresent() && bindBeanClass.isPresent()) {
-            Bean bean;
+            final Bean bean;
 
             if (fieldsInMessage) {
                 throw new SmooksConfigurationException("Unsupported reader based bean binding config.  Not supported when fields are defined in message.  See 'fieldsInMessage' attribute.");
@@ -194,12 +201,15 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
             if (BindingType.LIST.equals(bindingType.orElse(null))) {
                 Bean listBean = new Bean(ArrayList.class, bindBeanId.get(),
                         SmooksResourceConfiguration.DOCUMENT_FRAGMENT_SELECTOR);
-
+                listBean.setRegistry(registry);
+                
                 bean = listBean.newBean(bindBeanClass.get(), recordElementName);
+                bean.setRegistry(registry);
+                
                 listBean.bindTo(bean);
                 addFieldBindings(bean);
 
-                listBean.addVisitors(visitorMap);
+                visitorBindings.addAll(listBean.addVisitors());
             } else if (BindingType.MAP.equals(bindingType.orElse(null))) {
                 if (!bindMapKeyField.isPresent()) {
                     throw new SmooksConfigurationException(
@@ -208,23 +218,28 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
 
                 vfRecordMetaData.getRecordMetaData().assertValidFieldName(bindMapKeyField.get());
 
-                Bean mapBean = new Bean(LinkedHashMap.class, bindBeanId.get(),
-                        SmooksResourceConfiguration.DOCUMENT_FRAGMENT_SELECTOR);
+                Bean mapBean = new Bean(LinkedHashMap.class, bindBeanId.get(), SmooksResourceConfiguration.DOCUMENT_FRAGMENT_SELECTOR);
+                mapBean.setRegistry(registry);
+
                 Bean recordBean = new Bean(bindBeanClass.get(), RECORD_BEAN, recordElementName);
-                MapBindingWiringVisitor wiringVisitor = new MapBindingWiringVisitor(bindMapKeyField.get(), bindBeanId.get());
-
+                recordBean.setRegistry(registry);
+                
                 addFieldBindings(recordBean);
-
-                mapBean.addVisitors(visitorMap);
-                recordBean.addVisitors(visitorMap);
-                visitorMap.addVisitor(wiringVisitor, recordElementName, null, false);
+                visitorBindings.addAll(mapBean.addVisitors());
+                visitorBindings.addAll(recordBean.addVisitors());
+                
+                MapBindingWiringVisitor wiringVisitor = new MapBindingWiringVisitor(bindMapKeyField.get(), bindBeanId.get());
+                visitorBindings.add(new ContentHandlerBinding<>(wiringVisitor, recordElementName, null, registry));
             } else {
                 bean = new Bean(bindBeanClass.get(), bindBeanId.get(), recordElementName);
+                bean.setRegistry(registry);
                 addFieldBindings(bean);
 
-                bean.addVisitors(visitorMap);
+                visitorBindings.addAll(bean.addVisitors());
             }
         }
+        
+        return visitorBindings;
     }
 
     @PostConstruct
