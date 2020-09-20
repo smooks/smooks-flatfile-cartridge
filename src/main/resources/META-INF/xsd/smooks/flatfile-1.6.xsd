@@ -2,16 +2,16 @@
 <xs:schema targetNamespace="https://www.smooks.org/xsd/smooks/flatfile-1.6.xsd"
            elementFormDefault="qualified"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:smooks="https://www.smooks.org/xsd/smooks-1.2.xsd"
-           xmlns:smooks-flatfile="https://www.smooks.org/xsd/smooks/flatfile-1.6.xsd">
+           xmlns:smooks="https://www.smooks.org/xsd/smooks-2.0.xsd"
+           xmlns:ff="https://www.smooks.org/xsd/smooks/flatfile-1.6.xsd">
 
-    <xs:import namespace="https://www.smooks.org/xsd/smooks-1.2.xsd"/>
+    <xs:import namespace="https://www.smooks.org/xsd/smooks-2.0.xsd"/>
 
     <xs:annotation>
         <xs:documentation xml:lang="en">Smooks Flat File Reader Configuration</xs:documentation>
     </xs:annotation>
 
-    <xs:element name="reader" type="smooks-flatfile:reader" substitutionGroup="smooks:abstract-reader">
+    <xs:element name="reader" type="ff:reader" substitutionGroup="smooks:abstract-reader">
     	<xs:annotation>
     		<xs:documentation xml:lang="en">
     			Flat File Reader Configuration.
@@ -26,9 +26,9 @@
     	<xs:complexContent>
     		<xs:extension base="smooks:abstract-reader">
                 <xs:choice minOccurs="0" maxOccurs="1" >
-                    <xs:element name="singleBinding" type="smooks-flatfile:binding" />
-                    <xs:element name="listBinding" type="smooks-flatfile:binding" />
-                    <xs:element name="mapBinding" type="smooks-flatfile:mapBinding" />
+                    <xs:element name="singleBinding" type="ff:binding" />
+                    <xs:element name="listBinding" type="ff:binding" />
+                    <xs:element name="mapBinding" type="ff:mapBinding" />
                 </xs:choice>
     		</xs:extension>
     	</xs:complexContent>
@@ -39,7 +39,7 @@
     		 <xs:documentation xml:lang="en">Flat File Reader</xs:documentation>
     	</xs:annotation>
     	<xs:complexContent>
-    		<xs:extension base="smooks-flatfile:baseReader">
+    		<xs:extension base="ff:baseReader">
                 <xs:choice>
                     <xs:element minOccurs="0" maxOccurs="1" ref="smooks:params" />
                 </xs:choice>
@@ -149,7 +149,7 @@
             </xs:documentation>
     	</xs:annotation>
     	<xs:complexContent>
-    		<xs:extension base="smooks-flatfile:binding">
+    		<xs:extension base="ff:binding">
                 <xs:attribute name="keyField" type="xs:string" use="required">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">

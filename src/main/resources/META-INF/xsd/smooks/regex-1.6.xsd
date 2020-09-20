@@ -2,16 +2,16 @@
 <xs:schema targetNamespace="https://www.smooks.org/xsd/smooks/regex-1.6.xsd"
            elementFormDefault="qualified"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:smooks="https://www.smooks.org/xsd/smooks-1.2.xsd"
-           xmlns:smooks-regex="https://www.smooks.org/xsd/smooks/regex-1.6.xsd">
+           xmlns:smooks="https://www.smooks.org/xsd/smooks-2.0.xsd"
+           xmlns:regex="https://www.smooks.org/xsd/smooks/regex-1.6.xsd">
 
-    <xs:import namespace="https://www.smooks.org/xsd/smooks-1.2.xsd"/>
+    <xs:import namespace="https://www.smooks.org/xsd/smooks-2.0.xsd"/>
 
     <xs:annotation>
         <xs:documentation xml:lang="en">Smooks Regular Expression Reader Configuration</xs:documentation>
     </xs:annotation>
 
-    <xs:element name="reader" type="smooks-regex:reader" substitutionGroup="smooks:abstract-reader">
+    <xs:element name="reader" type="regex:reader" substitutionGroup="smooks:abstract-reader">
     	<xs:annotation>
     		<xs:documentation xml:lang="en">
     			Regular Expression Reader Configuration.
@@ -26,9 +26,9 @@
     	<xs:complexContent>
     		<xs:extension base="smooks:abstract-reader">
                 <xs:choice minOccurs="0" maxOccurs="1" >
-                    <xs:element name="singleBinding" type="smooks-regex:binding" />
-                    <xs:element name="listBinding" type="smooks-regex:binding" />
-                    <xs:element name="mapBinding" type="smooks-regex:mapBinding" />
+                    <xs:element name="singleBinding" type="regex:binding" />
+                    <xs:element name="listBinding" type="regex:binding" />
+                    <xs:element name="mapBinding" type="regex:mapBinding" />
                 </xs:choice>
     		</xs:extension>
     	</xs:complexContent>
@@ -39,7 +39,7 @@
     		 <xs:documentation xml:lang="en">Regular Expression Reader</xs:documentation>
     	</xs:annotation>
     	<xs:complexContent>
-    		<xs:extension base="smooks-regex:baseReader">
+    		<xs:extension base="regex:baseReader">
                 <xs:attribute name="regexPattern" type="xs:string" use="required">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">
@@ -146,7 +146,7 @@
             </xs:documentation>
     	</xs:annotation>
     	<xs:complexContent>
-    		<xs:extension base="smooks-regex:binding">
+    		<xs:extension base="regex:binding">
                 <xs:attribute name="keyField" type="xs:string" use="required">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">
