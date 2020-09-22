@@ -42,7 +42,7 @@
   =========================LICENSE_END==================================
   -->
 
-<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-1.2.xsd"
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
                       xmlns:regex="https://www.smooks.org/xsd/smooks/regex-1.6.xsd">
 
     <regex:reader fields="first,second,third" regexPattern="^([a-z])\|([a-z])\|([a-z])$">

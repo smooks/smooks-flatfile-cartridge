@@ -105,6 +105,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
 
     @Inject
     private Optional<BindingType> bindingType;
+    
     @Inject
     private Optional<String> bindMapKeyField;
 

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
   ========================LICENSE_START=================================
-  smooks-flatfile-cartridge
+  ff-cartridge
   %%
   Copyright (C) 2020 Smooks
   %%
@@ -42,97 +42,99 @@
   =========================LICENSE_END==================================
   -->
 
-<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-1.2.xsd" default-selector-namespace="https://www.smooks.org/xsd/smooks/flatfile-1.6.xsd">
+<smooks-resource-list xmlns="https://www.smooks.org/xsd/smooks-2.0.xsd"
+                      xmlns:smooks="https://www.smooks.org/xsd/smooks-2.0.xsd"
+                      xmlns:ff="https://www.smooks.org/xsd/smooks/flatfile-1.6.xsd">
 
-    <resource-config selector="reader">
+    <resource-config selector="ff:reader">
         <resource>org.smooks.cdr.extension.NewResourceConfig</resource>
         <param name="resource">org.smooks.cartridges.flatfile.FlatFileReader</param>
     </resource-config>
 
-    <resource-config selector="reader">
+    <resource-config selector="ff:reader">
         <resource>org.smooks.cdr.extension.SetOnResourceConfig</resource>
         <param name="setOn">selector</param>
         <param name="value">org.xml.sax.driver</param>
     </resource-config>
 
-    <resource-config selector="reader">
+    <resource-config selector="ff:reader">
         <resource>org.smooks.cdr.extension.MapToResourceConfigFromAttribute</resource>
         <param name="attribute">parserFactory</param>
     </resource-config>
 
-    <resource-config selector="reader">
+    <resource-config selector="ff:reader">
         <resource>org.smooks.cdr.extension.MapToResourceConfigFromAttribute</resource>
         <param name="attribute">fields</param>
     </resource-config>
 
-	<resource-config selector="reader">
+	<resource-config selector="ff:reader">
         <resource>org.smooks.cdr.extension.MapToResourceConfigFromAttribute</resource>
         <param name="attribute">rootElementName</param>
         <param name="defaultValue">records</param>
     </resource-config>
 
-    <resource-config selector="reader">
+    <resource-config selector="ff:reader">
         <resource>org.smooks.cdr.extension.MapToResourceConfigFromAttribute</resource>
         <param name="attribute">recordElementName</param>
         <param name="defaultValue">record</param>
     </resource-config>
 
-    <resource-config selector="reader">
+    <resource-config selector="ff:reader">
         <resource>org.smooks.cdr.extension.MapToResourceConfigFromAttribute</resource>
         <param name="attribute">recordDelimiter</param>
     </resource-config>
 
-    <resource-config selector="reader">
+    <resource-config selector="ff:reader">
         <resource>org.smooks.cdr.extension.MapToResourceConfigFromAttribute</resource>
         <param name="attribute">keepDelimiter</param>
     </resource-config>
 
-    <resource-config selector="reader">
+    <resource-config selector="ff:reader">
         <resource>org.smooks.cdr.extension.MapToResourceConfigFromAttribute</resource>
         <param name="attribute">indent</param>
     </resource-config>
 
-	<resource-config selector="reader">
+	<resource-config selector="ff:reader">
         <resource>org.smooks.cdr.extension.MapToResourceConfigFromAttribute</resource>
         <param name="attribute">strict</param>
     </resource-config>
 
-    <resource-config selector="reader/params/param" selector-namespace="https://www.smooks.org/xsd/smooks-1.2.xsd">
+    <resource-config selector="ff:reader/params/smooks:param">
         <resource>org.smooks.cdr.extension.MapToResourceConfigFromText</resource>
         <param name="mapToSpecifier">name</param>
     </resource-config>
 
-    <resource-config selector="singleBinding">
+    <resource-config selector="ff:singleBinding">
         <resource>org.smooks.cdr.extension.SetOnResourceConfig</resource>
         <param name="setOn">bindingType</param>
         <param name="value">SINGLE</param>
     </resource-config>
 
-    <resource-config selector="listBinding">
+    <resource-config selector="ff:listBinding">
         <resource>org.smooks.cdr.extension.SetOnResourceConfig</resource>
         <param name="setOn">bindingType</param>
         <param name="value">LIST</param>
     </resource-config>
 
-    <resource-config selector="mapBinding">
+    <resource-config selector="ff:mapBinding">
         <resource>org.smooks.cdr.extension.SetOnResourceConfig</resource>
         <param name="setOn">bindingType</param>
         <param name="value">MAP</param>
     </resource-config>
 
-    <resource-config selector="singleBinding,listBinding,mapBinding">
+    <resource-config selector="ff:singleBinding,ff:istBinding,ff:mapBinding">
         <resource>org.smooks.cdr.extension.MapToResourceConfigFromAttribute</resource>
         <param name="attribute">beanId</param>
         <param name="mapTo">bindBeanId</param>
     </resource-config>
 
-    <resource-config selector="singleBinding,listBinding,mapBinding">
+    <resource-config selector="ff:singleBinding,ff:listBinding,ff:mapBinding">
         <resource>org.smooks.cdr.extension.MapToResourceConfigFromAttribute</resource>
         <param name="attribute">class</param>
         <param name="mapTo">bindBeanClass</param>
     </resource-config>
 
-    <resource-config selector="mapBinding">
+    <resource-config selector="ff:mapBinding">
         <resource>org.smooks.cdr.extension.MapToResourceConfigFromAttribute</resource>
         <param name="attribute">keyField</param>
         <param name="mapTo">bindMapKeyField</param>
