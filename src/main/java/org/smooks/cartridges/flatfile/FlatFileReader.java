@@ -44,14 +44,14 @@ package org.smooks.cartridges.flatfile;
 
 import org.apache.commons.lang.StringUtils;
 import org.smooks.cdr.SmooksResourceConfiguration;
-import org.smooks.cdr.injector.Scope;
-import org.smooks.cdr.lifecycle.phase.PostConstructLifecyclePhase;
-import org.smooks.cdr.registry.lookup.LifecycleManagerLookup;
+import org.smooks.injector.Scope;
+import org.smooks.registry.lookup.LifecycleManagerLookup;
 import org.smooks.container.ApplicationContext;
 import org.smooks.container.ExecutionContext;
 import org.smooks.delivery.ContentHandlerBinding;
 import org.smooks.delivery.Visitor;
 import org.smooks.delivery.VisitorAppender;
+import org.smooks.lifecycle.phase.PostConstructLifecyclePhase;
 import org.smooks.xml.SmooksXMLReader;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;

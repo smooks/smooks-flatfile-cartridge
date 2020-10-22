@@ -40,7 +40,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * =========================LICENSE_END==================================
  */
-    package org.smooks.cartridges.flatfile;
+package org.smooks.cartridges.flatfile;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.smooks.assertion.AssertArgument;

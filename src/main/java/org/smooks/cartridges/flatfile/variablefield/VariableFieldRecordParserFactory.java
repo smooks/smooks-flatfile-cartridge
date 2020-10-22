@@ -50,15 +50,13 @@ import org.smooks.cartridges.flatfile.RecordParserFactory;
 import org.smooks.cartridges.javabean.Bean;
 import org.smooks.cdr.SmooksConfigurationException;
 import org.smooks.cdr.SmooksResourceConfiguration;
-import org.smooks.cdr.registry.Registry;
+import org.smooks.registry.Registry;
 import org.smooks.container.ExecutionContext;
 import org.smooks.delivery.ContentHandlerBinding;
 import org.smooks.delivery.Visitor;
 import org.smooks.delivery.VisitorAppender;
-import org.smooks.delivery.dom.DOMVisitAfter;
 import org.smooks.delivery.ordering.Consumer;
-import org.smooks.delivery.sax.SAXElement;
-import org.smooks.delivery.sax.SAXVisitAfter;
+import org.smooks.delivery.sax.ng.AfterVisitor;
 import org.smooks.expression.MVELExpressionEvaluator;
 import org.smooks.javabean.context.BeanContext;
 import org.smooks.xml.XmlUtil;
@@ -314,7 +312,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
         return string.replace(encodedString, new String(new char[] { replaceChar }));
     }
 
-    private class MapBindingWiringVisitor implements DOMVisitAfter, SAXVisitAfter, Consumer {
+    private class MapBindingWiringVisitor implements AfterVisitor, Consumer {
 
         private MVELExpressionEvaluator keyExtractor = new MVELExpressionEvaluator();
         private String mapBindingKey;
@@ -323,13 +321,9 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
             keyExtractor.setExpression(RECORD_BEAN + "." + bindKeyField);
             this.mapBindingKey = mapBindingKey;
         }
-
+        
+        @Override
         public void visitAfter(Element element, ExecutionContext executionContext) throws SmooksException {
-            wireObject(executionContext);
-        }
-
-        public void visitAfter(SAXElement element, ExecutionContext executionContext) throws SmooksException,
-                IOException {
             wireObject(executionContext);
         }
 
