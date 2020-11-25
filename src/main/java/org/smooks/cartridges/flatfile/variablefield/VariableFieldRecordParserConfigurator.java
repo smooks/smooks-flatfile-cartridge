@@ -46,7 +46,7 @@ import org.smooks.GenericReaderConfigurator;
 import org.smooks.cartridges.flatfile.Binding;
 import org.smooks.cartridges.flatfile.FlatFileReader;
 import org.smooks.cdr.SmooksConfigurationException;
-import org.smooks.cdr.SmooksResourceConfiguration;
+import org.smooks.cdr.ResourceConfig;
 import org.smooks.cartridges.flatfile.BindingType;
 
 import java.util.List;
@@ -89,7 +89,7 @@ public abstract class VariableFieldRecordParserConfigurator extends GenericReade
         return this;
     }
 
-    public List<SmooksResourceConfiguration> toConfig() {
+    public List<ResourceConfig> toConfig() {
         getParameters().setProperty("parserFactory", factoryParserClass.getName());
         getParameters().setProperty("indent", Boolean.toString(indent));
         getParameters().setProperty("strict", Boolean.toString(strict));

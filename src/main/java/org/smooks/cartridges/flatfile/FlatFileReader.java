@@ -43,7 +43,7 @@
 package org.smooks.cartridges.flatfile;
 
 import org.apache.commons.lang.StringUtils;
-import org.smooks.cdr.SmooksResourceConfiguration;
+import org.smooks.cdr.ResourceConfig;
 import org.smooks.injector.Scope;
 import org.smooks.registry.lookup.LifecycleManagerLookup;
 import org.smooks.container.ApplicationContext;
@@ -82,7 +82,7 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
 	private ExecutionContext execContext;
 
     @Inject
-    private SmooksResourceConfiguration config;
+    private ResourceConfig resourceConfig;
 
     @Inject
     private ApplicationContext appContext;
@@ -101,7 +101,7 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
 	@PostConstruct
 	public void initialize() throws IllegalAccessException, InstantiationException {
         parserFactory = parserFactoryClass.newInstance();
-        appContext.getRegistry().lookup(new LifecycleManagerLookup()).applyPhase(parserFactory, new PostConstructLifecyclePhase(new Scope(appContext.getRegistry(), config, parserFactory)));
+        appContext.getRegistry().lookup(new LifecycleManagerLookup()).applyPhase(parserFactory, new PostConstructLifecyclePhase(new Scope(appContext.getRegistry(), resourceConfig, parserFactory)));
 	}
 
 	@Override
