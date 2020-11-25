@@ -49,7 +49,7 @@ import org.smooks.cartridges.flatfile.RecordMetaData;
 import org.smooks.cartridges.flatfile.RecordParserFactory;
 import org.smooks.cartridges.javabean.Bean;
 import org.smooks.cdr.SmooksConfigurationException;
-import org.smooks.cdr.SmooksResourceConfiguration;
+import org.smooks.cdr.ResourceConfig;
 import org.smooks.registry.Registry;
 import org.smooks.container.ExecutionContext;
 import org.smooks.delivery.ContentHandlerBinding;
@@ -198,8 +198,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
             }
 
             if (BindingType.LIST.equals(bindingType.orElse(null))) {
-                Bean listBean = new Bean(ArrayList.class, bindBeanId.get(),
-                        SmooksResourceConfiguration.DOCUMENT_FRAGMENT_SELECTOR);
+                Bean listBean = new Bean(ArrayList.class, bindBeanId.get(), ResourceConfig.DOCUMENT_FRAGMENT_SELECTOR);
                 listBean.setRegistry(registry);
                 
                 bean = listBean.newBean(bindBeanClass.get(), recordElementName);
@@ -217,7 +216,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
 
                 vfRecordMetaData.getRecordMetaData().assertValidFieldName(bindMapKeyField.get());
 
-                Bean mapBean = new Bean(LinkedHashMap.class, bindBeanId.get(), SmooksResourceConfiguration.DOCUMENT_FRAGMENT_SELECTOR);
+                Bean mapBean = new Bean(LinkedHashMap.class, bindBeanId.get(), ResourceConfig.DOCUMENT_FRAGMENT_SELECTOR);
                 mapBean.setRegistry(registry);
 
                 Bean recordBean = new Bean(bindBeanClass.get(), RECORD_BEAN, recordElementName);
