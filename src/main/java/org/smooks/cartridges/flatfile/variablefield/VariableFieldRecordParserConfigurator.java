@@ -42,12 +42,12 @@
  */
 package org.smooks.cartridges.flatfile.variablefield;
 
-import org.smooks.GenericReaderConfigurator;
+import org.smooks.api.SmooksConfigException;
+import org.smooks.api.resource.config.ResourceConfig;
 import org.smooks.cartridges.flatfile.Binding;
-import org.smooks.cartridges.flatfile.FlatFileReader;
-import org.smooks.cdr.SmooksConfigurationException;
-import org.smooks.cdr.ResourceConfig;
 import org.smooks.cartridges.flatfile.BindingType;
+import org.smooks.cartridges.flatfile.FlatFileReader;
+import org.smooks.engine.resource.config.GenericReaderConfigurator;
 
 import java.util.List;
 
@@ -101,7 +101,7 @@ public abstract class VariableFieldRecordParserConfigurator extends GenericReade
             getParameters().setProperty("bindingType", binding.getBindingType().toString());
             if(binding.getBindingType() == BindingType.MAP) {
                 if(binding.getKeyField() == null) {
-                    throw new SmooksConfigurationException("CSV 'MAP' Binding must specify a 'keyField' property on the binding configuration.");
+                    throw new SmooksConfigException("CSV 'MAP' Binding must specify a 'keyField' property on the binding configuration.");
                 }
                 getParameters().setProperty("bindMapKeyField", binding.getKeyField());
             }

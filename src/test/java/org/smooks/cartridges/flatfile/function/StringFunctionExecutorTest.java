@@ -40,59 +40,50 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * =========================LICENSE_END==================================
  */
-package org.smooks.cartridges.flatfile;
+package org.smooks.cartridges.flatfile.function;
 
-import org.smooks.assertion.AssertArgument;
+import org.junit.Test;
 
-import java.util.List;
+import static org.junit.Assert.*;
+import static org.smooks.cartridges.flatfile.function.StringFunctionDefinitionParser.*;
 
 /**
- * Flat file record.
- *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @author <a href="mailto:maurice.zeijen@smies.com">maurice.zeijen@smies.com</a>
  */
-public class Record {
+public class StringFunctionExecutorTest {
 
-    private final String name;
-    private final List<Field> fields;
-    private final RecordMetaData recordMetaData;
+	@Test
+    public void test_execute() {
 
-    /**
-     * Public constructor.
-     * @param name The record name.  This will be used to create the element that will
-     * enclose the record field elements.
-     * @param fields The record fields.
-     * @param recordMetaData Record metadata.
-     */
-    public Record(String name, List<Field> fields, RecordMetaData recordMetaData) {
-        AssertArgument.isNotNullAndNotEmpty(name, "name");
-        AssertArgument.isNotNullAndNotEmpty(fields, "fields");
-        this.name = name;
-        this.fields = fields;
-        this.recordMetaData = recordMetaData;
+        String def = TRIM_DEFINITION;
+
+        assertEquals("blaat", StringFunctionExecutor.getInstance(def).execute(" blaat   "));
+                
+        def = TRIM_DEFINITION + SEPARATOR + UPPER_CASE_DEFINITION;
+
+        assertEquals("BLAAT", StringFunctionExecutor.getInstance(def).execute(" blaat   "));
+
     }
 
-    /**
-     * Get the name of the record.
-     * @return The record name.
-     */
-    public String getName() {
-        return name;
-    }
+	@Test
+    public void test_caching() {
 
-    /**
-     * Get the record fields.
-     * @return The record fields.
-     */
-    public List<Field> getFields() {
-        return fields;
-    }
+        String def1 = LOWER_CASE_DEFINITION;
+        StringFunctionExecutor executor1 = StringFunctionExecutor.getInstance(def1);
+        StringFunctionExecutor executor2 = StringFunctionExecutor.getInstance(def1);
 
-    /**
-     * Get the record metadata.
-     * @return The record metadata.
-     */
-    public RecordMetaData getRecordMetaData() {
-        return recordMetaData;
+        assertSame(executor1, executor2);
+
+        String def2 = TRIM_DEFINITION + SEPARATOR + UPPER_CASE_DEFINITION;
+        StringFunctionExecutor executor3 = StringFunctionExecutor.getInstance(def2);
+        StringFunctionExecutor executor4 = StringFunctionExecutor.getInstance(def2);
+
+        assertSame(executor3, executor4);
+        assertNotSame(executor1, executor3);
+
+        StringFunctionExecutor executor5 = StringFunctionExecutor.getInstance(def1);
+
+        assertSame(executor1, executor5);
+
     }
 }

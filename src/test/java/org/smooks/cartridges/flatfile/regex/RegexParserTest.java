@@ -48,9 +48,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.smooks.Smooks;
 import org.smooks.io.StreamUtils;
-import org.smooks.payload.JavaResult;
-import org.smooks.payload.StringResult;
-import org.smooks.payload.StringSource;
+import org.smooks.io.payload.JavaResult;
+import org.smooks.io.payload.StringResult;
+import org.smooks.io.payload.StringSource;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -138,7 +138,6 @@ public class RegexParserTest {
         StringResult result = new StringResult();
         smooks.filterSource(new StringSource(message), result);
 
-//        System.out.println(result);
         XMLUnit.setIgnoreWhitespace(true);
         XMLAssert.assertXMLEqual(expected, result.toString());
     }

@@ -40,59 +40,31 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * =========================LICENSE_END==================================
  */
-package org.smooks.cartridges.flatfile;
+package org.smooks.cartridges.flatfile.function;
 
-import org.smooks.assertion.AssertArgument;
-
-import java.util.List;
+import java.util.StringTokenizer;
 
 /**
- * Flat file record.
+ * Capitalizes all the words in the String
  *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @author <a href="mailto:maurice.zeijen@smies.com">maurice.zeijen@smies.com</a>
  */
-public class Record {
-
-    private final String name;
-    private final List<Field> fields;
-    private final RecordMetaData recordMetaData;
+public class CapitalizeFunction implements StringFunction {
 
     /**
-     * Public constructor.
-     * @param name The record name.  This will be used to create the element that will
-     * enclose the record field elements.
-     * @param fields The record fields.
-     * @param recordMetaData Record metadata.
+     * Capitalizes all the words in the String
+     *
+     * @param input The String
+     * @return The capitalized String
      */
-    public Record(String name, List<Field> fields, RecordMetaData recordMetaData) {
-        AssertArgument.isNotNullAndNotEmpty(name, "name");
-        AssertArgument.isNotNullAndNotEmpty(fields, "fields");
-        this.name = name;
-        this.fields = fields;
-        this.recordMetaData = recordMetaData;
-    }
-
-    /**
-     * Get the name of the record.
-     * @return The record name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Get the record fields.
-     * @return The record fields.
-     */
-    public List<Field> getFields() {
-        return fields;
-    }
-
-    /**
-     * Get the record metadata.
-     * @return The record metadata.
-     */
-    public RecordMetaData getRecordMetaData() {
-        return recordMetaData;
+    public String execute(String input) {
+        StringTokenizer st = new StringTokenizer(input, " \t\r\n", true);
+        StringBuilder buf = new StringBuilder(input.length());
+        while (st.hasMoreTokens()) {
+            String tok = st.nextToken();
+            buf.append(tok.substring(0, 1).toUpperCase());
+            buf.append(tok.substring(1).toLowerCase());
+        }
+        return buf.toString();
     }
 }

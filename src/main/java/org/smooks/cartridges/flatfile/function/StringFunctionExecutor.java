@@ -40,59 +40,68 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * =========================LICENSE_END==================================
  */
-package org.smooks.cartridges.flatfile;
+package org.smooks.cartridges.flatfile.function;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.smooks.assertion.AssertArgument;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
- * Flat file record.
+ * Takes a StringFunction definition and executes it on a string
  *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @author <a href="mailto:maurice.zeijen@smies.com">maurice.zeijen@smies.com</a>
  */
-public class Record {
+public class StringFunctionExecutor {
 
-    private final String name;
-    private final List<Field> fields;
-    private final RecordMetaData recordMetaData;
+    private static final ConcurrentMap<String, StringFunctionExecutor> cache = new ConcurrentHashMap<String, StringFunctionExecutor>();
 
-    /**
-     * Public constructor.
-     * @param name The record name.  This will be used to create the element that will
-     * enclose the record field elements.
-     * @param fields The record fields.
-     * @param recordMetaData Record metadata.
-     */
-    public Record(String name, List<Field> fields, RecordMetaData recordMetaData) {
-        AssertArgument.isNotNullAndNotEmpty(name, "name");
-        AssertArgument.isNotNullAndNotEmpty(fields, "fields");
-        this.name = name;
-        this.fields = fields;
-        this.recordMetaData = recordMetaData;
+    public static StringFunctionExecutor getInstance(String functionDefinition) {
+        StringFunctionExecutor executor = cache.get(functionDefinition);
+        if(executor == null) {
+            executor = new StringFunctionExecutor(functionDefinition, StringFunctionDefinitionParser.parse(functionDefinition));
+
+            StringFunctionExecutor existing = cache.putIfAbsent(functionDefinition, executor);
+
+            if(existing != null) {
+                executor = existing;
+            }
+        }
+
+        return executor;
+    }
+
+    private final List<StringFunction> functions;
+
+    private final String functionDefinition;
+
+    private StringFunctionExecutor(String functionDefinition, List<StringFunction> functions) {
+        this.functionDefinition = functionDefinition;
+        this.functions = functions;
     }
 
     /**
-     * Get the name of the record.
-     * @return The record name.
+     * Takes a StringFunction definition and executes it on a string
+     *
+     * @param input The input string
+     * @return The result string
      */
-    public String getName() {
-        return name;
+    public String execute(String input) {
+        AssertArgument.isNotNull(input, "input");
+
+        for(StringFunction function : functions) {
+            input = function.execute(input);
+        }
+
+        return input;
     }
 
-    /**
-     * Get the record fields.
-     * @return The record fields.
-     */
-    public List<Field> getFields() {
-        return fields;
-    }
-
-    /**
-     * Get the record metadata.
-     * @return The record metadata.
-     */
-    public RecordMetaData getRecordMetaData() {
-        return recordMetaData;
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                    .append("functionDefinition", functionDefinition)
+                    .toString();
     }
 }

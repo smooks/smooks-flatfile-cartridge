@@ -42,11 +42,11 @@
  */
 package org.smooks.cartridges.flatfile;
 
+import org.smooks.api.SmooksConfigException;
+import org.smooks.assertion.AssertArgument;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.smooks.assertion.AssertArgument;
-import org.smooks.cdr.SmooksConfigurationException;
 
 /**
  * Record metadata.
@@ -55,9 +55,9 @@ import org.smooks.cdr.SmooksConfigurationException;
  */
 public class RecordMetaData {
 
-    private String name;
-    private List<FieldMetaData> fields;
-    private boolean wildCardRecord;
+    private final String name;
+    private final List<FieldMetaData> fields;
+    private final boolean wildCardRecord;
     private int ignoredFieldCount;
     private int unignoredFieldCount;
     private List<String> fieldNames;
@@ -156,7 +156,7 @@ public class RecordMetaData {
      */
     public void assertValidFieldName(String fieldName) {
         if (!fieldNames.contains(fieldName)) {
-            throw new SmooksConfigurationException("Invalid field name '" + fieldName + "'.  Valid names: "
+            throw new SmooksConfigException("Invalid field name '" + fieldName + "'.  Valid names: "
                     + fieldNames + ".");
         }
     }

@@ -43,16 +43,16 @@
 package org.smooks.cartridges.flatfile;
 
 import org.apache.commons.lang.StringUtils;
-import org.smooks.cdr.ResourceConfig;
-import org.smooks.injector.Scope;
-import org.smooks.registry.lookup.LifecycleManagerLookup;
-import org.smooks.container.ApplicationContext;
-import org.smooks.container.ExecutionContext;
-import org.smooks.delivery.ContentHandlerBinding;
-import org.smooks.delivery.Visitor;
-import org.smooks.delivery.VisitorAppender;
-import org.smooks.lifecycle.phase.PostConstructLifecyclePhase;
-import org.smooks.xml.SmooksXMLReader;
+import org.smooks.api.ApplicationContext;
+import org.smooks.api.ExecutionContext;
+import org.smooks.api.delivery.ContentHandlerBinding;
+import org.smooks.api.delivery.VisitorAppender;
+import org.smooks.api.resource.config.ResourceConfig;
+import org.smooks.api.resource.reader.SmooksXMLReader;
+import org.smooks.api.resource.visitor.Visitor;
+import org.smooks.engine.injector.Scope;
+import org.smooks.engine.lifecycle.PostConstructLifecyclePhase;
+import org.smooks.engine.lookup.LifecycleManagerLookup;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -73,10 +73,10 @@ import java.util.List;
 public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
     private static Attributes EMPTY_ATTRIBS = new AttributesImpl();
 
-    private static char[] INDENT_LF = new char[] {'\n'};
-    private static char[] INDENTCHARS = new char[] {'\t', '\t'};
-    private static String RECORD_NUMBER_ATTR = "number";
-    private static String RECORD_TRUNCATED_ATTR = "truncated";
+    private static final char[] INDENT_LF = new char[] {'\n'};
+    private static final char[] INDENTCHARS = new char[] {'\t', '\t'};
+    private static final String RECORD_NUMBER_ATTR = "number";
+    private static final String RECORD_TRUNCATED_ATTR = "truncated";
 
     private ContentHandler contentHandler;
 	private ExecutionContext execContext;

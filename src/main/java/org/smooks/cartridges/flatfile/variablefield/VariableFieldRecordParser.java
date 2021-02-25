@@ -42,10 +42,10 @@
  */
 package org.smooks.cartridges.flatfile.variablefield;
 
-import org.smooks.cartridges.flatfile.*;
-import org.smooks.function.StringFunctionExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.smooks.cartridges.flatfile.*;
+import org.smooks.cartridges.flatfile.function.StringFunctionExecutor;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -42,23 +42,24 @@
  */
 package org.smooks.cartridges.flatfile.variablefield;
 
-import org.smooks.SmooksException;
+import org.smooks.api.ExecutionContext;
+import org.smooks.api.Registry;
+import org.smooks.api.SmooksConfigException;
+import org.smooks.api.SmooksException;
+import org.smooks.api.bean.context.BeanContext;
+import org.smooks.api.delivery.ContentHandlerBinding;
+import org.smooks.api.delivery.VisitorAppender;
+import org.smooks.api.delivery.ordering.Consumer;
+import org.smooks.api.resource.config.ResourceConfig;
+import org.smooks.api.resource.visitor.Visitor;
+import org.smooks.api.resource.visitor.sax.ng.AfterVisitor;
 import org.smooks.cartridges.flatfile.BindingType;
 import org.smooks.cartridges.flatfile.FieldMetaData;
 import org.smooks.cartridges.flatfile.RecordMetaData;
 import org.smooks.cartridges.flatfile.RecordParserFactory;
 import org.smooks.cartridges.javabean.Bean;
-import org.smooks.cdr.SmooksConfigurationException;
-import org.smooks.cdr.ResourceConfig;
-import org.smooks.registry.Registry;
-import org.smooks.container.ExecutionContext;
-import org.smooks.delivery.ContentHandlerBinding;
-import org.smooks.delivery.Visitor;
-import org.smooks.delivery.VisitorAppender;
-import org.smooks.delivery.ordering.Consumer;
-import org.smooks.delivery.sax.ng.AfterVisitor;
-import org.smooks.expression.MVELExpressionEvaluator;
-import org.smooks.javabean.context.BeanContext;
+import org.smooks.engine.delivery.DefaultContentHandlerBinding;
+import org.smooks.engine.expression.MVELExpressionEvaluator;
 import org.smooks.xml.XmlUtil;
 import org.w3c.dom.Element;
 
@@ -188,11 +189,11 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
             final Bean bean;
 
             if (fieldsInMessage) {
-                throw new SmooksConfigurationException("Unsupported reader based bean binding config.  Not supported when fields are defined in message.  See 'fieldsInMessage' attribute.");
+                throw new SmooksConfigException("Unsupported reader based bean binding config.  Not supported when fields are defined in message.  See 'fieldsInMessage' attribute.");
             }
 
             if (vfRecordMetaData.isMultiTypeRecordSet()) {
-                throw new SmooksConfigurationException(
+                throw new SmooksConfigException(
                         "Unsupported reader based bean binding config for a multi record type record set.  "
                                 + "Only supported for single record type record sets.  Use <jb:bean> configs for multi binding record type record sets.");
             }
@@ -210,7 +211,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
                 visitorBindings.addAll(listBean.addVisitors());
             } else if (BindingType.MAP.equals(bindingType.orElse(null))) {
                 if (!bindMapKeyField.isPresent()) {
-                    throw new SmooksConfigurationException(
+                    throw new SmooksConfigException(
                             "'MAP' Binding must specify a 'keyField' property on the binding configuration.");
                 }
 
@@ -227,7 +228,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
                 visitorBindings.addAll(recordBean.addVisitors());
                 
                 MapBindingWiringVisitor wiringVisitor = new MapBindingWiringVisitor(bindMapKeyField.get(), bindBeanId.get());
-                visitorBindings.add(new ContentHandlerBinding<>(wiringVisitor, recordElementName, null, registry));
+                visitorBindings.add(new DefaultContentHandlerBinding<>(wiringVisitor, recordElementName, null, registry));
             } else {
                 bean = new Bean(bindBeanClass.get(), bindBeanId.get(), recordElementName);
                 bean.setRegistry(registry);

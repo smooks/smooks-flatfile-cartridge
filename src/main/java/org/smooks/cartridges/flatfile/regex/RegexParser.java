@@ -42,6 +42,9 @@
  */
 package org.smooks.cartridges.flatfile.regex;
 
+import org.smooks.cartridges.flatfile.variablefield.VariableFieldRecordParser;
+import org.xml.sax.InputSource;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -50,9 +53,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.smooks.cartridges.flatfile.variablefield.VariableFieldRecordParser;
-import org.xml.sax.InputSource;
 
 /**
  * Regex record parser.
