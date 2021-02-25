@@ -47,14 +47,14 @@ without being bound by section 3 of the GNU GPL.
   2. Conveying Modified Versions.
 
   If you modify a copy of the Library, and, in your modifications, a
-facility refers to a function or data to be supplied by an Application
+facility refers to a org.smooks.cartridges.flatfile.function or data to be supplied by an Application
 that uses the facility (other than as an argument passed when the
 facility is invoked), then you may convey a copy of the modified
 version:
 
    a) under this License, provided that you make a good faith effort to
    ensure that, in the event an Application does not supply the
-   function or data, the facility still operates, and performs
+   org.smooks.cartridges.flatfile.function or data, the facility still operates, and performs
    whatever part of its purpose remains meaningful, or
 
    b) under the GNU GPL, with none of the additional permissions of

@@ -44,7 +44,7 @@ package org.smooks.cartridges.flatfile;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.smooks.assertion.AssertArgument;
-import org.smooks.function.StringFunctionExecutor;
+import org.smooks.cartridges.flatfile.function.StringFunctionExecutor;
 
 /**
  * Flat file record field metadata.

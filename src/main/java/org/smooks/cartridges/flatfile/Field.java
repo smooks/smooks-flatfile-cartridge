@@ -51,8 +51,8 @@ import org.smooks.assertion.AssertArgument;
  */
 public class Field {
 
-    private String name;
-    private String value;
+    private final String name;
+    private final String value;
     private FieldMetaData metaData;
 
     /**

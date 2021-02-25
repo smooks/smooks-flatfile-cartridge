@@ -40,59 +40,53 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * =========================LICENSE_END==================================
  */
-package org.smooks.cartridges.flatfile;
+package org.smooks.cartridges.flatfile.function;
 
-import org.smooks.assertion.AssertArgument;
+import org.junit.Test;
 
 import java.util.List;
 
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+import static org.smooks.cartridges.flatfile.function.StringFunctionDefinitionParser.*;
+
 /**
- * Flat file record.
- *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @author <a href="mailto:maurice.zeijen@smies.com">maurice.zeijen@smies.com</a>
  */
-public class Record {
+public class StringFunctionDefinitionParserTest {
 
-    private final String name;
-    private final List<Field> fields;
-    private final RecordMetaData recordMetaData;
+	@Test
+    public void test_parse() {
 
-    /**
-     * Public constructor.
-     * @param name The record name.  This will be used to create the element that will
-     * enclose the record field elements.
-     * @param fields The record fields.
-     * @param recordMetaData Record metadata.
-     */
-    public Record(String name, List<Field> fields, RecordMetaData recordMetaData) {
-        AssertArgument.isNotNullAndNotEmpty(name, "name");
-        AssertArgument.isNotNullAndNotEmpty(fields, "fields");
-        this.name = name;
-        this.fields = fields;
-        this.recordMetaData = recordMetaData;
+        assertSame(TRIM_FUNCTION, parse(TRIM_DEFINITION).get(0));
+        assertSame(LEFT_TRIM_FUNCTION, parse(LEFT_TRIM_DEFINITION).get(0));
+        assertSame(RIGHT_TRIM_FUNCTION, parse(RIGHT_TRIM_DEFINITION).get(0));
+        assertSame(UPPER_CASE_FUNCTION, parse(UPPER_CASE_DEFINITION).get(0));
+        assertSame(LOWER_CASE_FUNCTION, parse(LOWER_CASE_DEFINITION).get(0));
+        assertSame(CAPITALIZE_FUNCTION, parse(CAPITALIZE_DEFINITION).get(0));
+        assertSame(CAPITALIZE_FIRST_FUNCTION, parse(CAPITALIZE_FIRST_DEFINITION).get(0));
+        assertSame(UNCAPITALIZE_FIRST_FUNCTION, parse(UNCAPITALIZE_FIRST_DEFINITION).get(0));
+
+        String def = TRIM_DEFINITION + SEPARATOR + UPPER_CASE_DEFINITION + SEPARATOR + CAPITALIZE_DEFINITION;
+
+        List<StringFunction> functions = parse(def);
+
+        assertSame(TRIM_FUNCTION, functions.get(0));
+        assertSame(UPPER_CASE_FUNCTION, functions.get(1));
+        assertSame(CAPITALIZE_FUNCTION, functions.get(2));
+
     }
 
-    /**
-     * Get the name of the record.
-     * @return The record name.
-     */
-    public String getName() {
-        return name;
+	@Test
+    public void test_unknown_function() {
+        try {
+            parse("fewfewfwe");
+        } catch (UnknownStringFunctionException e) {
+            
+             return;
+        }
+        fail("UnknownStringFunctionException not thrown");
+
     }
 
-    /**
-     * Get the record fields.
-     * @return The record fields.
-     */
-    public List<Field> getFields() {
-        return fields;
-    }
-
-    /**
-     * Get the record metadata.
-     * @return The record metadata.
-     */
-    public RecordMetaData getRecordMetaData() {
-        return recordMetaData;
-    }
 }

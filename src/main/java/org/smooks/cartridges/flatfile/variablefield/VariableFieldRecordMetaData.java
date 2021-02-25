@@ -42,18 +42,13 @@
  */
 package org.smooks.cartridges.flatfile.variablefield;
 
+import org.smooks.api.SmooksConfigException;
 import org.smooks.assertion.AssertArgument;
-import org.smooks.cartridges.flatfile.RecordMetaData;
-import org.smooks.cdr.SmooksConfigurationException;
 import org.smooks.cartridges.flatfile.FieldMetaData;
-import org.smooks.function.StringFunctionExecutor;
+import org.smooks.cartridges.flatfile.RecordMetaData;
+import org.smooks.cartridges.flatfile.function.StringFunctionExecutor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,7 +98,7 @@ public class VariableFieldRecordMetaData {
 
                 recordMetaData = buildMultiRecordMetaData(recordDefs.get(0));
                 if (recordMetaData == null) {
-                    throw new SmooksConfigurationException("Unsupported fields definition '" + fields
+                    throw new SmooksConfigException("Unsupported fields definition '" + fields
                             + "'.  Must match either the single ('" + SINGLE_RECORD_PATTERN.pattern()
                             + "') or multi ('" + MULTI_RECORD_PATTERN.pattern() + "') record pattern.");
                 }
@@ -112,7 +107,7 @@ public class VariableFieldRecordMetaData {
                     recordDef = recordDef.trim();
                     RecordMetaData multiRecordMetaData = buildMultiRecordMetaData(recordDef);
                     if (multiRecordMetaData == null) {
-                        throw new SmooksConfigurationException("Unsupported fields definition '" + recordDef
+                        throw new SmooksConfigException("Unsupported fields definition '" + recordDef
                                 + "'.  Must match the multi record pattern ('" + MULTI_RECORD_PATTERN.pattern()
                                 + "') .");
                     }

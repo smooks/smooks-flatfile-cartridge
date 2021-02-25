@@ -53,9 +53,9 @@ import org.smooks.assertion.AssertArgument;
  */
 public class Binding {
 
-    private String beanId;
-    private Class beanClass;
-    private BindingType bindingType;
+    private final String beanId;
+    private final Class beanClass;
+    private final BindingType bindingType;
     private String keyField;
 
     public Binding(String beanId, Class beanClass, BindingType bindingType) {

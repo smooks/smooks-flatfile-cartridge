@@ -40,59 +40,22 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * =========================LICENSE_END==================================
  */
-package org.smooks.cartridges.flatfile;
-
-import org.smooks.assertion.AssertArgument;
-
-import java.util.List;
+package org.smooks.cartridges.flatfile.function;
 
 /**
- * Flat file record.
+ * Represents a function that can manipulate a String.
  *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @author <a href="mailto:maurice@zeijen.net">maurice@zeijen.net</a>
  */
-public class Record {
-
-    private final String name;
-    private final List<Field> fields;
-    private final RecordMetaData recordMetaData;
+interface StringFunction {
 
     /**
-     * Public constructor.
-     * @param name The record name.  This will be used to create the element that will
-     * enclose the record field elements.
-     * @param fields The record fields.
-     * @param recordMetaData Record metadata.
+     * Applies the function
+     *
+     * @param input The String
+     * @return The manipulated String
      */
-    public Record(String name, List<Field> fields, RecordMetaData recordMetaData) {
-        AssertArgument.isNotNullAndNotEmpty(name, "name");
-        AssertArgument.isNotNullAndNotEmpty(fields, "fields");
-        this.name = name;
-        this.fields = fields;
-        this.recordMetaData = recordMetaData;
-    }
+	String execute(String input);
 
-    /**
-     * Get the name of the record.
-     * @return The record name.
-     */
-    public String getName() {
-        return name;
-    }
 
-    /**
-     * Get the record fields.
-     * @return The record fields.
-     */
-    public List<Field> getFields() {
-        return fields;
-    }
-
-    /**
-     * Get the record metadata.
-     * @return The record metadata.
-     */
-    public RecordMetaData getRecordMetaData() {
-        return recordMetaData;
-    }
 }
