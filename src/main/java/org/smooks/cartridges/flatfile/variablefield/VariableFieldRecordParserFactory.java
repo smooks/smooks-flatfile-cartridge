@@ -60,7 +60,7 @@ import org.smooks.cartridges.flatfile.RecordParserFactory;
 import org.smooks.cartridges.javabean.Bean;
 import org.smooks.engine.delivery.DefaultContentHandlerBinding;
 import org.smooks.engine.expression.MVELExpressionEvaluator;
-import org.smooks.xml.XmlUtil;
+import org.smooks.support.XmlUtil;
 import org.w3c.dom.Element;
 
 import javax.annotation.PostConstruct;
