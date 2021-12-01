@@ -199,12 +199,9 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
             }
 
             if (BindingType.LIST.equals(bindingType.orElse(null))) {
-                Bean listBean = new Bean(ArrayList.class, bindBeanId.get(), ResourceConfig.DOCUMENT_FRAGMENT_SELECTOR);
-                listBean.setRegistry(registry);
-                
+                Bean listBean = new Bean(ArrayList.class, bindBeanId.get(), ResourceConfig.DOCUMENT_FRAGMENT_SELECTOR, registry);
                 bean = listBean.newBean(bindBeanClass.get(), recordElementName);
-                bean.setRegistry(registry);
-                
+
                 listBean.bindTo(bean);
                 addFieldBindings(bean);
 
@@ -217,12 +214,9 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
 
                 vfRecordMetaData.getRecordMetaData().assertValidFieldName(bindMapKeyField.get());
 
-                Bean mapBean = new Bean(LinkedHashMap.class, bindBeanId.get(), ResourceConfig.DOCUMENT_FRAGMENT_SELECTOR);
-                mapBean.setRegistry(registry);
+                Bean mapBean = new Bean(LinkedHashMap.class, bindBeanId.get(), ResourceConfig.DOCUMENT_FRAGMENT_SELECTOR, registry);
+                Bean recordBean = new Bean(bindBeanClass.get(), RECORD_BEAN, recordElementName, registry);
 
-                Bean recordBean = new Bean(bindBeanClass.get(), RECORD_BEAN, recordElementName);
-                recordBean.setRegistry(registry);
-                
                 addFieldBindings(recordBean);
                 visitorBindings.addAll(mapBean.addVisitors());
                 visitorBindings.addAll(recordBean.addVisitors());
@@ -230,8 +224,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
                 MapBindingWiringVisitor wiringVisitor = new MapBindingWiringVisitor(bindMapKeyField.get(), bindBeanId.get());
                 visitorBindings.add(new DefaultContentHandlerBinding<>(wiringVisitor, recordElementName, null, registry));
             } else {
-                bean = new Bean(bindBeanClass.get(), bindBeanId.get(), recordElementName);
-                bean.setRegistry(registry);
+                bean = new Bean(bindBeanClass.get(), bindBeanId.get(), recordElementName, registry);
                 addFieldBindings(bean);
 
                 visitorBindings.addAll(bean.addVisitors());
