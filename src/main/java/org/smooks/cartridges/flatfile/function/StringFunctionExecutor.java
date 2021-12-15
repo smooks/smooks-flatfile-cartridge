@@ -42,7 +42,6 @@
  */
 package org.smooks.cartridges.flatfile.function;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.smooks.assertion.AssertArgument;
 
 import java.util.List;
@@ -100,8 +99,6 @@ public class StringFunctionExecutor {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                    .append("functionDefinition", functionDefinition)
-                    .toString();
+        return String.format("%s[functionDefinition=%s]", this, functionDefinition);
     }
 }

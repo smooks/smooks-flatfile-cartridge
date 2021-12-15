@@ -42,7 +42,6 @@
  */
 package org.smooks.cartridges.flatfile;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.smooks.assertion.AssertArgument;
 import org.smooks.cartridges.flatfile.function.StringFunctionExecutor;
 
@@ -93,9 +92,7 @@ public class FieldMetaData {
 
     @Override
     public String toString() {
-        ToStringBuilder builder = new ToStringBuilder(this);
-        builder.append("name", name).append("stringFunctionExecutor", stringFunctionExecutor);
-        return builder.toString();
+        return String.format("%s[name=%s,stringFunctionExecutor=%s]", this, name, stringFunctionExecutor);
     }
 
     private int parseIgnoreFieldDirective(String field) {
