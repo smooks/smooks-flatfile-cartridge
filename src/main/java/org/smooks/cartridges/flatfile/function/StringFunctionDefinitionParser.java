@@ -42,8 +42,6 @@
  */
 package org.smooks.cartridges.flatfile.function;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +50,7 @@ import java.util.List;
  *
  * @author <a href="mailto:maurice.zeijen@smies.com">maurice.zeijen@smies.com</a>
  */
-public class StringFunctionDefinitionParser {
+public final class StringFunctionDefinitionParser {
 
     public static final TrimFunction TRIM_FUNCTION = new TrimFunction();
     public static final LeftTrimFunction LEFT_TRIM_FUNCTION = new LeftTrimFunction();
@@ -71,8 +69,8 @@ public class StringFunctionDefinitionParser {
     public static final String CAPITALIZE_DEFINITION = "capitalize";
     public static final String CAPITALIZE_FIRST_DEFINITION = "cap_first";
     public static final String UNCAPITALIZE_FIRST_DEFINITION = "uncap_first";
-    
-    public static final char SEPARATOR = '.';
+
+    public static final String SEPARATOR = ".";
 
     private StringFunctionDefinitionParser() {
     }
@@ -80,31 +78,44 @@ public class StringFunctionDefinitionParser {
     public static List<StringFunction> parse(String definition) {
         List<StringFunction> functions = new ArrayList<StringFunction>();
 
-        String[] functionsDef = StringUtils.split(definition, SEPARATOR);
+        final String[] functionsDef;
+        if (definition.startsWith(".") && definition.length() > 1) {
+            functionsDef = definition.substring(1).split("\\" + SEPARATOR);
+        } else {
+            functionsDef = definition.split("\\" + SEPARATOR);
+        }
 
-        for(String functionDef : functionsDef) {
-            if(functionDef.equals(TRIM_DEFINITION)) {
-                functions.add(TRIM_FUNCTION);
-            }else if(functionDef.equals(LEFT_TRIM_DEFINITION)) {
-                functions.add(LEFT_TRIM_FUNCTION);
-            }else if(functionDef.equals(RIGHT_TRIM_DEFINITION)) {
-                functions.add(RIGHT_TRIM_FUNCTION);
-            } else if(functionDef.equals(UPPER_CASE_DEFINITION)) {
-                functions.add(UPPER_CASE_FUNCTION);
-            } else if(functionDef.equals(LOWER_CASE_DEFINITION)) {
-                functions.add(LOWER_CASE_FUNCTION);
-            }  else if(functionDef.equals(CAPITALIZE_DEFINITION)) {
-                functions.add(CAPITALIZE_FUNCTION);
-            }  else if(functionDef.equals(CAPITALIZE_FIRST_DEFINITION)) {
-                functions.add(CAPITALIZE_FIRST_FUNCTION);
-            }  else if(functionDef.equals(UNCAPITALIZE_FIRST_DEFINITION)) {
-                functions.add(UNCAPITALIZE_FIRST_FUNCTION);
-            }  else {
-                throw new UnknownStringFunctionException("The function '"+ functionDef +"' in the function definition '"+ definition +"' is unknown.");
+        for (String functionDef : functionsDef) {
+            switch (functionDef) {
+                case TRIM_DEFINITION:
+                    functions.add(TRIM_FUNCTION);
+                    break;
+                case LEFT_TRIM_DEFINITION:
+                    functions.add(LEFT_TRIM_FUNCTION);
+                    break;
+                case RIGHT_TRIM_DEFINITION:
+                    functions.add(RIGHT_TRIM_FUNCTION);
+                    break;
+                case UPPER_CASE_DEFINITION:
+                    functions.add(UPPER_CASE_FUNCTION);
+                    break;
+                case LOWER_CASE_DEFINITION:
+                    functions.add(LOWER_CASE_FUNCTION);
+                    break;
+                case CAPITALIZE_DEFINITION:
+                    functions.add(CAPITALIZE_FUNCTION);
+                    break;
+                case CAPITALIZE_FIRST_DEFINITION:
+                    functions.add(CAPITALIZE_FIRST_FUNCTION);
+                    break;
+                case UNCAPITALIZE_FIRST_DEFINITION:
+                    functions.add(UNCAPITALIZE_FIRST_FUNCTION);
+                    break;
+                default:
+                    throw new UnknownStringFunctionException("The function '" + functionDef + "' in the function definition '" + definition + "' is unknown.");
             }
         }
 
         return functions;
     }
-
 }

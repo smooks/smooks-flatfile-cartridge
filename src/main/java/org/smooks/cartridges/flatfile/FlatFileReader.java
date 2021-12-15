@@ -42,7 +42,6 @@
  */
 package org.smooks.cartridges.flatfile;
 
-import org.apache.commons.lang.StringUtils;
 import org.smooks.api.ApplicationContext;
 import org.smooks.api.ExecutionContext;
 import org.smooks.api.delivery.ContentHandlerBinding;
@@ -142,7 +141,7 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
 
                 // Start the document and add the root "record-set" element...
                 contentHandler.startDocument();
-                contentHandler.startElement(XMLConstants.NULL_NS_URI, rootElementName, StringUtils.EMPTY, EMPTY_ATTRIBS);
+                contentHandler.startElement(XMLConstants.NULL_NS_URI, rootElementName, "", EMPTY_ATTRIBS);
 
                 // Output each of the CVS line entries...
                 int lineNumber = 0;
@@ -166,7 +165,7 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
                         attrs.addAttribute(XMLConstants.NULL_NS_URI, RECORD_TRUNCATED_ATTR, RECORD_TRUNCATED_ATTR, "xs:boolean", Boolean.TRUE.toString());
                     }
 
-                    contentHandler.startElement(XMLConstants.NULL_NS_URI, record.getName(), StringUtils.EMPTY, attrs);
+                    contentHandler.startElement(XMLConstants.NULL_NS_URI, record.getName(), "", attrs);
                     for(Field recordField : recordFields) {
                         String fieldName = recordField.getName();
 
@@ -175,11 +174,11 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
                             contentHandler.characters(INDENTCHARS, 0, 2);
                         }
 
-                        contentHandler.startElement(XMLConstants.NULL_NS_URI, fieldName, StringUtils.EMPTY, EMPTY_ATTRIBS);
+                        contentHandler.startElement(XMLConstants.NULL_NS_URI, fieldName, "", EMPTY_ATTRIBS);
 
                         String value = recordField.getValue();
                         contentHandler.characters(value.toCharArray(), 0, value.length());
-                        contentHandler.endElement(XMLConstants.NULL_NS_URI, fieldName, StringUtils.EMPTY);
+                        contentHandler.endElement(XMLConstants.NULL_NS_URI, fieldName, "");
                     }
 
                     if(indent) {
@@ -187,7 +186,7 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
                         contentHandler.characters(INDENTCHARS, 0, 1);
                     }
 
-                    contentHandler.endElement(XMLConstants.NULL_NS_URI, record.getName(), StringUtils.EMPTY);
+                    contentHandler.endElement(XMLConstants.NULL_NS_URI, record.getName(), "");
 
                     record = recordParser.nextRecord();
                 }
@@ -197,7 +196,7 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
                 }
 
                 // Close out the "csv-set" root element and end the document..
-                contentHandler.endElement(XMLConstants.NULL_NS_URI, rootElementName, StringUtils.EMPTY);
+                contentHandler.endElement(XMLConstants.NULL_NS_URI, rootElementName, "");
                 contentHandler.endDocument();
             } finally {
                 recordParser.uninitialize();
