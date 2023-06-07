@@ -55,7 +55,7 @@ import org.smooks.engine.lookup.LifecycleManagerLookup;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.XMLConstants;
