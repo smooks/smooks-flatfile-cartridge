@@ -45,7 +45,7 @@ package org.smooks.cartridges.flatfile.regex;
 import org.smooks.cartridges.flatfile.RecordParser;
 import org.smooks.cartridges.flatfile.variablefield.VariableFieldRecordParserFactory;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.regex.Pattern;

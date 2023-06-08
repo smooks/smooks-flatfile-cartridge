@@ -63,7 +63,7 @@ import org.smooks.engine.expression.MVELExpressionEvaluator;
 import org.smooks.support.XmlUtil;
 import org.w3c.dom.Element;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
