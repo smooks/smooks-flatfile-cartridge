@@ -6,35 +6,35 @@
  * %%
  * Licensed under the terms of the Apache License Version 2.0, or
  * the GNU Lesser General Public License version 3.0 or later.
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0 OR LGPL-3.0-or-later
- * 
+ *
  * ======================================================================
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * ======================================================================
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -60,10 +60,11 @@ import org.smooks.cartridges.flatfile.RecordParserFactory;
 import org.smooks.cartridges.javabean.Bean;
 import org.smooks.engine.delivery.DefaultContentHandlerBinding;
 import org.smooks.engine.expression.MVELExpressionEvaluator;
-import org.smooks.support.XmlUtil;
+import org.smooks.support.XmlUtils;
 import org.w3c.dom.Element;
 
 import jakarta.annotation.PostConstruct;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
@@ -74,7 +75,7 @@ import java.util.regex.Pattern;
 
 /**
  * Abstract VariableFieldRecordParserFactory.
- * 
+ *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public abstract class VariableFieldRecordParserFactory implements RecordParserFactory, VisitorAppender {
@@ -104,7 +105,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
 
     @Inject
     private Optional<BindingType> bindingType;
-    
+
     @Inject
     private Optional<String> bindMapKeyField;
 
@@ -124,7 +125,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
 
     @Inject
     private Registry registry;
-    
+
     private String overFlowFromLastRecord = "";
 
     public int getSkipLines() {
@@ -145,7 +146,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
 
     /**
      * Get the default record element name.
-     * 
+     *
      * @return The default record element name.
      */
     public String getRecordElementName() {
@@ -158,6 +159,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
 
     /**
      * Get the {@link RecordMetaData} instance for the specified fields.
+     *
      * @param fieldValues The fields.
      * @return The RecordMetaData instance.
      */
@@ -167,6 +169,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
 
     /**
      * Is the parser configured to parse multiple record types.
+     *
      * @return True if the parser configured to parse multiple record types, otherwise false.
      */
     public boolean isMultiTypeRecordSet() {
@@ -175,7 +178,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
 
     /**
      * Is this parser instance strict.
-     * 
+     *
      * @return True if the parser is strict, otherwise false.
      */
     public boolean strict() {
@@ -184,7 +187,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
 
     @Override
     public List<ContentHandlerBinding<Visitor>> addVisitors() {
-        List<ContentHandlerBinding<Visitor>> visitorBindings = new ArrayList<>(); 
+        List<ContentHandlerBinding<Visitor>> visitorBindings = new ArrayList<>();
         if (bindBeanId.isPresent() && bindBeanClass.isPresent()) {
             final Bean bean;
 
@@ -220,9 +223,9 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
                 addFieldBindings(recordBean);
                 visitorBindings.addAll(mapBean.addVisitors());
                 visitorBindings.addAll(recordBean.addVisitors());
-                
+
                 MapBindingWiringVisitor wiringVisitor = new MapBindingWiringVisitor(bindMapKeyField.get(), bindBeanId.get());
-                visitorBindings.add(new DefaultContentHandlerBinding<>(wiringVisitor, recordElementName, null, registry));
+                visitorBindings.add(new DefaultContentHandlerBinding<>(wiringVisitor, recordElementName, registry));
             } else {
                 bean = new Bean(bindBeanClass.get(), bindBeanId.get(), recordElementName, registry);
                 addFieldBindings(bean);
@@ -230,7 +233,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
                 visitorBindings.addAll(bean.addVisitors());
             }
         }
-        
+
         return visitorBindings;
     }
 
@@ -248,7 +251,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
             recordDelimiter = Optional.of(removeSpecialCharEncodeString(recordDelimiter.get(), "\\n", '\n'));
             recordDelimiter = Optional.of(removeSpecialCharEncodeString(recordDelimiter.get(), "\\r", '\r'));
             recordDelimiter = Optional.of(removeSpecialCharEncodeString(recordDelimiter.get(), "\\t", '\t'));
-            recordDelimiter = Optional.ofNullable(XmlUtil.removeEntities(recordDelimiter.get()));
+            recordDelimiter = Optional.ofNullable(XmlUtils.removeEntities(recordDelimiter.get()));
         }
     }
 
@@ -259,7 +262,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
 
     /**
      * Read a record from the specified reader (up to the next recordDelimiter).
-     * 
+     *
      * @param recordReader The record {@link Reader}.
      * @param recordBuffer The record buffer into which the record is read.
      * @throws IOException Error reading record.
@@ -302,7 +305,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
     }
 
     private static String removeSpecialCharEncodeString(String string, String encodedString, char replaceChar) {
-        return string.replace(encodedString, new String(new char[] { replaceChar }));
+        return string.replace(encodedString, new String(new char[]{replaceChar}));
     }
 
     private class MapBindingWiringVisitor implements AfterVisitor, Consumer {
@@ -314,7 +317,7 @@ public abstract class VariableFieldRecordParserFactory implements RecordParserFa
             keyExtractor.setExpression(RECORD_BEAN + "." + bindKeyField);
             this.mapBindingKey = mapBindingKey;
         }
-        
+
         @Override
         public void visitAfter(Element element, ExecutionContext executionContext) throws SmooksException {
             wireObject(executionContext);

@@ -6,35 +6,35 @@
  * %%
  * Licensed under the terms of the Apache License Version 2.0, or
  * the GNU Lesser General Public License version 3.0 or later.
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0 OR LGPL-3.0-or-later
- * 
+ *
  * ======================================================================
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * ======================================================================
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -56,6 +56,7 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 
 import jakarta.annotation.PostConstruct;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.XMLConstants;
@@ -72,13 +73,13 @@ import java.util.List;
 public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
     private static Attributes EMPTY_ATTRIBS = new AttributesImpl();
 
-    private static final char[] INDENT_LF = new char[] {'\n'};
-    private static final char[] INDENTCHARS = new char[] {'\t', '\t'};
+    private static final char[] INDENT_LF = new char[]{'\n'};
+    private static final char[] INDENTCHARS = new char[]{'\t', '\t'};
     private static final String RECORD_NUMBER_ATTR = "number";
     private static final String RECORD_TRUNCATED_ATTR = "truncated";
 
     private ContentHandler contentHandler;
-	private ExecutionContext execContext;
+    private ExecutionContext execContext;
 
     @Inject
     private ResourceConfig resourceConfig;
@@ -97,15 +98,15 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
     @Inject
     private Boolean indent = false;
 
-	@PostConstruct
-	public void initialize() throws IllegalAccessException, InstantiationException {
+    @PostConstruct
+    public void initialize() throws IllegalAccessException, InstantiationException {
         parserFactory = parserFactoryClass.newInstance();
         appContext.getRegistry().lookup(new LifecycleManagerLookup()).applyPhase(parserFactory, new PostConstructLifecyclePhase(new Scope(appContext.getRegistry(), resourceConfig, parserFactory)));
-	}
+    }
 
-	@Override
+    @Override
     public List<ContentHandlerBinding<Visitor>> addVisitors() {
-        if(parserFactory instanceof VisitorAppender) {
+        if (parserFactory instanceof VisitorAppender) {
             return ((VisitorAppender) parserFactory).addVisitors();
         } else {
             return Collections.emptyList();
@@ -113,20 +114,20 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
     }
 
     /* (non-Javadoc)
-	 * @see org.smooks.xml.SmooksXMLReader#setExecutionContext(org.smooks.container.ExecutionContext)
-	 */
-	public void setExecutionContext(ExecutionContext request) {
-		this.execContext = request;
-	}
+     * @see org.smooks.xml.SmooksXMLReader#setExecutionContext(org.smooks.container.ExecutionContext)
+     */
+    public void setExecutionContext(ExecutionContext request) {
+        this.execContext = request;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.xml.sax.XMLReader#parse(org.xml.sax.InputSource)
-	 */
-	public void parse(InputSource inputSource) throws IOException, SAXException {
-        if(contentHandler == null) {
+    /* (non-Javadoc)
+     * @see org.xml.sax.XMLReader#parse(org.xml.sax.InputSource)
+     */
+    public void parse(InputSource inputSource) throws IOException, SAXException {
+        if (contentHandler == null) {
             throw new IllegalStateException("'contentHandler' not set.  Cannot parse Record stream.");
         }
-        if(execContext == null) {
+        if (execContext == null) {
             throw new IllegalStateException("'execContext' not set.  Cannot parse Record stream.");
         }
 
@@ -152,7 +153,7 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
 
                     List<Field> recordFields = record.getFields();
 
-                    if(indent) {
+                    if (indent) {
                         contentHandler.characters(INDENT_LF, 0, 1);
                         contentHandler.characters(INDENTCHARS, 0, 1);
                     }
@@ -161,15 +162,15 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
                     attrs.addAttribute(XMLConstants.NULL_NS_URI, RECORD_NUMBER_ATTR, RECORD_NUMBER_ATTR, "xs:int", Integer.toString(lineNumber));
 
                     RecordMetaData recordMetaData = record.getRecordMetaData();
-                    if(recordFields.size() < recordMetaData.getUnignoredFieldCount()) {
+                    if (recordFields.size() < recordMetaData.getUnignoredFieldCount()) {
                         attrs.addAttribute(XMLConstants.NULL_NS_URI, RECORD_TRUNCATED_ATTR, RECORD_TRUNCATED_ATTR, "xs:boolean", Boolean.TRUE.toString());
                     }
 
                     contentHandler.startElement(XMLConstants.NULL_NS_URI, record.getName(), "", attrs);
-                    for(Field recordField : recordFields) {
+                    for (Field recordField : recordFields) {
                         String fieldName = recordField.getName();
 
-                        if(indent) {
+                        if (indent) {
                             contentHandler.characters(INDENT_LF, 0, 1);
                             contentHandler.characters(INDENTCHARS, 0, 2);
                         }
@@ -181,7 +182,7 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
                         contentHandler.endElement(XMLConstants.NULL_NS_URI, fieldName, "");
                     }
 
-                    if(indent) {
+                    if (indent) {
                         contentHandler.characters(INDENT_LF, 0, 1);
                         contentHandler.characters(INDENTCHARS, 0, 1);
                     }
@@ -191,7 +192,7 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
                     record = recordParser.nextRecord();
                 }
 
-                if(indent) {
+                if (indent) {
                     contentHandler.characters(INDENT_LF, 0, 1);
                 }
 
@@ -202,11 +203,11 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
                 recordParser.uninitialize();
             }
         } finally {
-        	// These properties need to be reset for every execution (e.g. when reader is pooled).
-        	contentHandler = null;
-        	execContext = null;
+            // These properties need to be reset for every execution (e.g. when reader is pooled).
+            contentHandler = null;
+            execContext = null;
         }
-	}
+    }
 
     public void setContentHandler(ContentHandler contentHandler) {
         this.contentHandler = contentHandler;
@@ -222,18 +223,15 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
      *
      ****************************************************************************/
 
-    public void parse(String systemId)
-    {
+    public void parse(String systemId) {
         throw new UnsupportedOperationException("Operation not supports by this reader.");
     }
 
-    public boolean getFeature(String name)
-    {
+    public boolean getFeature(String name) {
         return false;
     }
 
-    public void setFeature(String name, boolean value)
-    {
+    public void setFeature(String name, boolean value) {
     }
 
     public DTDHandler getDTDHandler() {
@@ -257,12 +255,10 @@ public class FlatFileReader implements SmooksXMLReader, VisitorAppender {
     public void setErrorHandler(ErrorHandler arg0) {
     }
 
-    public Object getProperty(String name)
-    {
+    public Object getProperty(String name) {
         return null;
     }
 
-    public void setProperty(String name, Object value)
-    {
+    public void setProperty(String name, Object value) {
     }
 }
