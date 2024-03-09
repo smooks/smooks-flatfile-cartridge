@@ -47,7 +47,7 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-    			<xs:attribute name="fields" type="xs:string" use="optional">
+    			<xs:attribute name="fields" type="xs:string">
     				<xs:annotation>
     					<xs:documentation xml:lang="en">
     						Comma separated list of Regular Expression record field names.
@@ -56,35 +56,35 @@
     					</xs:documentation>
     				</xs:annotation>
     			</xs:attribute>
-    			<xs:attribute name="rootElementName" type="xs:string" use="optional" default="records">
+    			<xs:attribute name="rootElementName" type="xs:string" default="records">
     				<xs:annotation>
     					<xs:documentation xml:lang="en">
     						Name of the root element.  Defaults to "records".
     					</xs:documentation>
     				</xs:annotation>
     			</xs:attribute>
-    			<xs:attribute name="recordElementName" type="xs:string" use="optional" default="record">
+    			<xs:attribute name="recordElementName" type="xs:string" default="record">
     				<xs:annotation>
     					<xs:documentation xml:lang="en">
     						Name of record element.  Defaults to "record".
     					</xs:documentation>
     				</xs:annotation>
     			</xs:attribute>
-                <xs:attribute name="recordDelimiter" type="xs:string" use="optional">
+                <xs:attribute name="recordDelimiter" type="xs:string">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">
                             Record delimiter.  Defaults to newline ("\n").
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="keepDelimiter" type="xs:boolean" use="optional" default="false">
+                <xs:attribute name="keepDelimiter" type="xs:boolean" default="false">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">
                             Keep the Record delimiter as part of the record text.  Defaults to false..
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="indent" type="xs:boolean" use="optional" default="false">
+                <xs:attribute name="indent" type="xs:boolean" default="false">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">
                             Add indentation character data to the generated event stream.  This simply makes
@@ -93,7 +93,7 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="strict" type="xs:boolean" use="optional" default="true">
+                <xs:attribute name="strict" type="xs:boolean" default="true">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">
                             This flag simply adds to the generated event stream all invalid Regular Expression record elements (#tokens less #expected tokens).
@@ -160,7 +160,7 @@
 
     <xs:simpleType name="char">
     	<xs:restriction base="xs:string">
-    		<xs:length value="1"></xs:length>
+            <xs:length value="1"/>
     	</xs:restriction>
     </xs:simpleType>
 </xs:schema>
