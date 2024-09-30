@@ -47,9 +47,9 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.smooks.Smooks;
-import org.smooks.io.payload.JavaResult;
-import org.smooks.io.payload.StringResult;
-import org.smooks.io.payload.StringSource;
+import org.smooks.io.sink.JavaSink;
+import org.smooks.io.sink.StringSink;
+import org.smooks.io.source.StringSource;
 import org.smooks.support.StreamUtils;
 import org.xml.sax.SAXException;
 
@@ -85,11 +85,11 @@ public class RegexParserTest {
     @Test
     public void test_05() throws IOException, SAXException {
         Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-config-05.xml"));
-        JavaResult result = new JavaResult();
+        JavaSink sink = new JavaSink();
 
-        smooks.filterSource(new StringSource("a|b|c\n\rd|e|f"), result);
+        smooks.filterSource(new StringSource("a|b|c\n\rd|e|f"), sink);
 
-        List<FSTRecord> fstRecords = (List<FSTRecord>) result.getBean("fstRecords");
+        List<FSTRecord> fstRecords = (List<FSTRecord>) sink.getBean("fstRecords");
 
         Assert.assertEquals(2, fstRecords.size());
         Assert.assertEquals("a|b|c", fstRecords.get(0).toString());
@@ -135,10 +135,10 @@ public class RegexParserTest {
         Smooks smooks = new Smooks(getClass().getResourceAsStream("/smooks-config-" + config + ".xml"));
         String expected = StreamUtils.readStreamAsString(getClass().getResourceAsStream("/expected-" + config + ".xml"), "UTF-8");
 
-        StringResult result = new StringResult();
-        smooks.filterSource(new StringSource(message), result);
+        StringSink sink = new StringSink();
+        smooks.filterSource(new StringSource(message), sink);
 
         XMLUnit.setIgnoreWhitespace(true);
-        XMLAssert.assertXMLEqual(expected, result.toString());
+        XMLAssert.assertXMLEqual(expected, sink.toString());
     }
 }
